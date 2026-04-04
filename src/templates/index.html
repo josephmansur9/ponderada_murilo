@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Dashboard em Tempo Real</h1>
+
+    <div style="width: 80%; margin: auto; background: white; padding: 20px; border-radius: 10px; shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <canvas id="graficoTemperatura"></canvas>
+    </div>
+
+    <h2>Últimas Leituras</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px;">
+        {% for leitura in leituras %}
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; min-width: 150px; background: #fafafa;">
+            <p><strong>Temp:</strong> {{ leitura.temperatura }}°C</p>
+            <p><strong>Umid:</strong> {{ leitura.umidade }}%</p>
+            <p><small style="color: #666;">{{ leitura.timestamp }}</small></p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Pegando os dados vindos do Flask/Jinja2
+        const labels = [{% for l in leituras|reverse %}"{{ l.timestamp.split(' ')[1] }}",{% endfor %}];
+        const dadosTemp = [{% for l in leituras|reverse %}{{ l.temperatura }},{% endfor %}];
+
+        const ctx = document.getElementById('graficoTemperatura').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Variação de Temperatura (°C)',
+                    data: dadosTemp,
+                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: false }
+                }
+            }
+        });
+
+        // Auto-refresh para acompanhar a simulação (a cada 5 segundos)
+        setTimeout(() => { location.reload(); }, 5000);
+    </script>
+{% endblock %}
