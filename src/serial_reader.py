@@ -1,4 +1,4 @@
-# Leitura da porta serial do Arduino
+# simula os dados que são enviados
 import requests, time, random
 
 URL = 'http://localhost:5001/leituras'
@@ -17,7 +17,7 @@ def simular_estacao():
             print(f"Enviado: {dados} | Status: {response.status_code}")
         except Exception as e:
             print(f"Erro ao conectar na API: {e}")
-        time.sleep(5) # Envia a cada 5 segundos [cite: 78]
+        time.sleep(5) # Envia a cada 5 segundos 
 
 if __name__ == '__main__':
     simular_estacao()

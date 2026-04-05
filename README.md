@@ -1,6 +1,6 @@
 # Estação Meteorológica IoT — Projeto Flask
 
-Este projeto é uma aplicação web para monitoramento de dados meteorológicos (temperatura, umidade, pressão) utilizando Python, Flask e SQLite. Os dados são simulados e enviados automaticamente para a aplicação, permitindo visualização em tempo real, histórico, edição e exclusão.
+Este projeto é uma aplicação web para monitoramento de dados meteorológicos (temperatura, umidade, pressão) que utiliza Python, Flask e SQLite. Os dados são simulados e enviados automaticamente para a aplicação, permitindo visualização em tempo real, histórico, edição e exclusão.
 
 ---
 
@@ -12,19 +12,13 @@ Este projeto é uma aplicação web para monitoramento de dados meteorológicos 
    cd ponderada_murilo
    ```
 
-2. **(Opcional, mas recomendado) Crie um ambiente virtual:**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
-
-3. **Instale as dependências:**
+2. **Instale as dependências:**
    ```bash
    pip install flask
    ```
 
-4. **Inicialize o banco de dados:**
-   O banco será criado automaticamente ao rodar o app pela primeira vez.
+3. **Inicialize o banco de dados:**
+   O banco é criado automaticamente ao rodar o app pela primeira vez.
 
 ---
 
@@ -34,14 +28,14 @@ Este projeto é uma aplicação web para monitoramento de dados meteorológicos 
    ```bash
    python3 src/app.py
    ```
-   O servidor estará disponível em [http://localhost:5001](http://localhost:5001).
+   O servidor fica disponível em [http://localhost:5001](http://localhost:5001).
 
 2. **Inicie o simulador de dados:**
    Em outro terminal, execute:
    ```bash
    python3 src/serial_reader.py
    ```
-   Isso enviará leituras simuladas para a aplicação periodicamente.
+   Esse arquivo manda leituras simuladas para a aplicação a cada 5 segundos.
 
 ---
 
@@ -80,7 +74,7 @@ Este projeto é uma aplicação web para monitoramento de dados meteorológicos 
 - **DELETE /leituras/<id>**  
   Remove uma leitura.
 - **GET /api/leituras?limite=20&offset=0**  
-  Retorna 20 leituras a partir do offset 0, em JSON:
+  Retorna 20 leituras a partir do 0, em JSON:
   http://localhost:5001/api/leituras?limite=20&offset=0
 
 - **GET /api/estatisticas**  
@@ -91,8 +85,40 @@ Este projeto é uma aplicação web para monitoramento de dados meteorológicos 
 
 ## **Sobre a Simulação de Dados**
 
-Neste projeto, optei por simular os dados meteorológicos ao invés de coletá-los de sensores reais.  
-**Motivo:**  
-A simulação permite testar e demonstrar todas as funcionalidades do sistema sem depender de hardware físico, tornando o desenvolvimento, depuração e apresentação mais ágeis e acessíveis.
+Neste projeto, eu escolhi por simular os dados meteorológicos ao invés de coletá-los com sensores reais. Isso porque pensei que a simulação permite testar e demonstrar todas as funcionalidades do sistema sem depender de erros do hardware, tornando o desenvolvimento, e a apresentação acessíveis.
 
 O arquivo `src/serial_reader.py` gera valores aleatórios de temperatura, umidade e pressão, enviando-os periodicamente para a API da aplicação, como se fossem leituras reais de uma estação meteorológica conectada via Arduino.
+
+---
+
+## Exemplos Visuais do Sistema
+
+### Tela Principal
+Exemplo da tela principal com gráfico:
+
+![Tela gráfico](src/assets/grafico.png)
+
+### Histórico de Leituras
+Histórico de leituras com várias linhas:
+
+![Histórico de leituras](src/assets/historico.png)
+
+### Tela de Edição
+Tela de edição de uma leitura:
+
+![Edição de leitura](src/assets/editar.png)
+
+### Exemplo do Dados no Banco
+Exemplo de dados no banco de dados (SELECT * FROM leituras;) (não cabia as 30 linhas em uma imagem):
+
+![Exemplo de dados no banco](src/assets/BD1.png)
+
+### Outro exemplo para mostrar mais linhas
+
+![Exemplo de dados no banco 2](src/assets/BD2.png)
+
+### Exemplo de Resposta JSON
+Exemplo de resposta do endpoint `/api/estatisticas`:
+
+![Resposta estatísticas](src/assets/estatistica.png)
+

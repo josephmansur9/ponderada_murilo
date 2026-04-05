@@ -3,7 +3,7 @@ import sqlite3
 
 def get_db_connection():
     conn = sqlite3.connect('dados.db', timeout=10)
-    conn.execute('PRAGMA journal_mode=WAL') # Permite escrita simultânea [cite: 131]
+    conn.execute('PRAGMA journal_mode=WAL') 
     conn.execute('PRAGMA busy_timeout=5000')
     conn.row_factory = sqlite3.Row
     return conn
@@ -23,9 +23,9 @@ def inserir_leitura(temp, umid, pressao=None):
     conn.close()
     return id_novo
 
+# pega as estatisticas de maximo minimo e media da temperatura
 def obter_estatisticas():
     conn = get_db_connection()
-    # Busca média, mínimo e máximo da temperatura
     stats = conn.execute('''
         SELECT 
             AVG(temperatura) as media, 
@@ -36,6 +36,7 @@ def obter_estatisticas():
     conn.close()
     return stats
 
+# lista as 50 leituras mais recentes, com paginação
 def listar_leituras(limite=50, offset=0):
     conn = get_db_connection()
     leituras = conn.execute(
@@ -44,12 +45,14 @@ def listar_leituras(limite=50, offset=0):
     conn.close()
     return leituras
 
+# busca uma leitura específica pelo ID
 def buscar_leitura(id):
     conn = get_db_connection()
     leitura = conn.execute('SELECT * FROM leituras WHERE id = ?', (id,)).fetchone()
     conn.close()
     return leitura
 
+# atualiza uma leitura existente no banco
 def atualizar_leitura(id, temp, umid, pressao=None):
     conn = get_db_connection()
     conn.execute(
@@ -59,6 +62,7 @@ def atualizar_leitura(id, temp, umid, pressao=None):
     conn.commit()
     conn.close()
 
+#deleta uma leitura do banco
 def deletar_leitura(id):
     conn = get_db_connection()
     conn.execute('DELETE FROM leituras WHERE id = ?', (id,))

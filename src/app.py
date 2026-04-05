@@ -4,6 +4,7 @@ import database
 
 app = Flask(__name__)
 
+# rota principal que mostra as leituras mais recentes
 @app.route('/')
 def index():
     dados = database.listar_leituras(10)
@@ -11,6 +12,7 @@ def index():
         return jsonify([dict(ix) for ix in dados])
     return render_template('index.html', leituras=dados)
 
+# rota para criar nova leitura ou listar todas as leituras com paginação
 @app.route('/leituras', methods=['GET', 'POST'])
 def listar_ou_criar():
     if request.method == 'POST':
@@ -25,8 +27,8 @@ def listar_ou_criar():
             dados.get('pressao')
         )
         return jsonify({'id': id_novo, 'status': 'criado'}), 201
-
-    # Pagination support
+    
+    # listar leituras com paginação
     try:
         limite = int(request.args.get('limite', 50))
         offset = int(request.args.get('offset', 0))
@@ -38,6 +40,7 @@ def listar_ou_criar():
         return jsonify([dict(ix) for ix in dados])
     return render_template('historico.html', leituras=dados)
 
+# rota pra visualizar, atualizar ou deletar uma leitura
 @app.route('/leituras/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def gerenciar_leitura(id):
     if request.method == 'GET':
@@ -53,7 +56,7 @@ def gerenciar_leitura(id):
         database.deletar_leitura(id)
         return jsonify({'status': 'removido'})
 
-# Paginated API endpoint for infinite scroll
+# rota para pegar as estatisticas
 @app.route('/api/leituras', methods=['GET'])
 def api_leituras():
     try:
@@ -65,6 +68,7 @@ def api_leituras():
     dados = database.listar_leituras(limite=limite, offset=offset)
     return jsonify([dict(ix) for ix in dados])
     
+# rota pra pegar as estatisticas da temperatura
 @app.route('/api/estatisticas', methods=['GET'])
 def estatisticas():
     stats = database.obter_estatisticas()
