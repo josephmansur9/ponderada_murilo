@@ -36,9 +36,11 @@ def obter_estatisticas():
     conn.close()
     return stats
 
-def listar_leituras(limite=50):
+def listar_leituras(limite=50, offset=0):
     conn = get_db_connection()
-    leituras = conn.execute('SELECT * FROM leituras ORDER BY timestamp DESC LIMIT ?', (limite,)).fetchall()
+    leituras = conn.execute(
+        'SELECT * FROM leituras ORDER BY timestamp DESC LIMIT ? OFFSET ?', (limite, offset)
+    ).fetchall()
     conn.close()
     return leituras
 
@@ -48,9 +50,12 @@ def buscar_leitura(id):
     conn.close()
     return leitura
 
-def atualizar_leitura(id, temp, umid):
+def atualizar_leitura(id, temp, umid, pressao=None):
     conn = get_db_connection()
-    conn.execute('UPDATE leituras SET temperatura = ?, umidade = ? WHERE id = ?', (temp, umid, id))
+    conn.execute(
+        'UPDATE leituras SET temperatura = ?, umidade = ?, pressao = ? WHERE id = ?',
+        (temp, umid, pressao, id)
+    )
     conn.commit()
     conn.close()
 

@@ -26,7 +26,16 @@ def listar_ou_criar():
         )
         return jsonify({'id': id_novo, 'status': 'criado'}), 201
 
-    dados = database.listar_leituras()
+    # Pagination support
+    try:
+        limite = int(request.args.get('limite', 50))
+        offset = int(request.args.get('offset', 0))
+    except ValueError:
+        limite = 50
+        offset = 0
+    dados = database.listar_leituras(limite=limite, offset=offset)
+    if request.args.get('formato') == 'json':
+        return jsonify([dict(ix) for ix in dados])
     return render_template('historico.html', leituras=dados)
 
 @app.route('/leituras/<int:id>', methods=['GET', 'PUT', 'DELETE'])
@@ -37,12 +46,24 @@ def gerenciar_leitura(id):
     
     if request.method == 'PUT':
         dados = request.get_json()
-        database.atualizar_leitura(id, dados['temperatura'], dados['umidade'])
+        database.atualizar_leitura(id, dados['temperatura'], dados['umidade'], dados.get('pressao'))
         return jsonify({'status': 'atualizado'})
 
     if request.method == 'DELETE':
         database.deletar_leitura(id)
         return jsonify({'status': 'removido'})
+
+# Paginated API endpoint for infinite scroll
+@app.route('/api/leituras', methods=['GET'])
+def api_leituras():
+    try:
+        limite = int(request.args.get('limite', 20))
+        offset = int(request.args.get('offset', 0))
+    except ValueError:
+        limite = 20
+        offset = 0
+    dados = database.listar_leituras(limite=limite, offset=offset)
+    return jsonify([dict(ix) for ix in dados])
     
 @app.route('/api/estatisticas', methods=['GET'])
 def estatisticas():

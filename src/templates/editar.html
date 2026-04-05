@@ -8,6 +8,8 @@
         <label>Umidade (%):</label>
         <input type="number" step="0.01" id="umid" value="{{ leitura.umidade }}" required><br><br>
         
+        <label>Pressão (hPa):</label>
+        <input type="number" step="0.01" id="pressao" value="{{ leitura.pressao }}"><br><br>
         <button type="submit">Salvar Alterações</button>
         <a href="/leituras">Cancelar</a>
     </form>
@@ -20,7 +22,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     temperatura: document.getElementById('temp').value,
-                    umidade: document.getElementById('umid').value
+                    umidade: document.getElementById('umid').value,
+                    pressao: document.getElementById('pressao').value
                 })
             });
             if (response.ok) {
