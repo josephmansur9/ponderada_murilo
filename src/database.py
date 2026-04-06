@@ -1,6 +1,7 @@
 # Funções de acesso ao SQLite
 import sqlite3
 
+# conecta com o bando de dados utilizando WAL
 def get_db_connection():
     conn = sqlite3.connect('dados.db', timeout=10)
     conn.execute('PRAGMA journal_mode=WAL') 
@@ -8,11 +9,13 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+# inicializa o banco de dados e cria a tabela se não existir
 def init_db():
     with get_db_connection() as conn:
         with open('src/schema.sql', mode='r') as f:
             conn.cursor().executescript(f.read())
 
+# insere uma nova leitura no banco
 def inserir_leitura(temp, umid, pressao=None):
     conn = get_db_connection()
     cur = conn.cursor()

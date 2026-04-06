@@ -27,8 +27,6 @@ def listar_ou_criar():
             dados.get('pressao')
         )
         return jsonify({'id': id_novo, 'status': 'criado'}), 201
-    
-    # listar leituras com paginação
     try:
         limite = int(request.args.get('limite', 50))
         offset = int(request.args.get('offset', 0))
@@ -81,7 +79,7 @@ def estatisticas():
     return jsonify({'erro': 'Sem dados disponíveis'}), 404
 
 
-# Error handlers for debugging
+# para lidar com erros 
 @app.errorhandler(400)
 def bad_request(e):
     return f"400 Bad Request: {e}", 400

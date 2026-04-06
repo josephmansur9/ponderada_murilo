@@ -2,47 +2,69 @@
 
 {% block content %}
     <h1>Histórico de Leituras</h1>
-    
-    <table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%; text-align: left;">
-        <thead>
-            <tr style="background-color: #f2f2f2;">
-                <th>ID</th>
-                <th>Temperatura (°C)</th>
-                <th>Umidade (%)</th>
-                <th>Pressão (hPa)</th>
-                <th>Data/Hora</th>
-                <th>Ações</th> </tr>
-        </thead>
-        <tbody>
-            {% for leitura in leituras %}
-            <tr id="linha-{{ leitura.id }}">
-                <td>{{ leitura.id }}</td>
-                <td>{{ leitura.temperatura }}</td>
-                <td>{{ leitura.umidade }}</td>
-                <td>{{ leitura.pressao if leitura.pressao else '-' }}</td>
-                <td>{{ leitura.timestamp }}</td>
-                <td>
-                    <a href="/leituras/{{ leitura.id }}" style="margin-right: 10px; color: blue;">Editar</a>
-                    
-                    <button onclick="deletarLeitura({{ leitura.id }})" style="color: red; cursor: pointer;">Excluir</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <div id="estatisticas" class="stats-box">
+        <strong>Estatísticas:</strong> Carregando...
+    </div>
+
+    <div class="tabela-box">
+        <table class="tabela-leituras">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Temperatura (°C)</th>
+                    <th>Umidade (%)</th>
+                    <th>Pressão (hPa)</th>
+                    <th>Data/Hora</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leitura in leituras %}
+                <tr id="linha-{{ leitura.id }}">
+                    <td>{{ leitura.id }}</td>
+                    <td>{{ leitura.temperatura }}</td>
+                    <td>{{ leitura.umidade }}</td>
+                    <td>{{ leitura.pressao if leitura.pressao else '-' }}</td>
+                    <td>{{ leitura.timestamp }}</td>
+                    <td>
+                        <a href="/leituras/{{ leitura.id }}" class="btn-editar">Editar</a>
+                        <button onclick="deletarLeitura({{ leitura.id }})" class="btn-excluir">Excluir</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
     <script>
+        // Buscar estatísticas da API e exibir
+        async function carregarEstatisticas() {
+            try {
+                const resp = await fetch('/api/estatisticas');
+                if (resp.ok) {
+                    const stats = await resp.json();
+                    if (stats.media !== undefined) {
+                        document.getElementById('estatisticas').innerHTML =
+                            `<strong>Estatísticas:</strong> Média: <b>${stats.media}°C</b> | Mínimo: <b>${stats.minimo}°C</b> | Máximo: <b>${stats.maximo}°C</b>`;
+                    } else {
+                        document.getElementById('estatisticas').innerHTML = 'Sem dados disponíveis.';
+                    }
+                } else {
+                    document.getElementById('estatisticas').innerHTML = 'Erro ao buscar estatísticas.';
+                }
+            } catch (e) {
+                document.getElementById('estatisticas').innerHTML = 'Erro ao buscar estatísticas.';
+            }
+        }
+        carregarEstatisticas();
+
         // Função para deletar via API (Método DELETE)
         async function deletarLeitura(id) {
             if (confirm('Tem certeza que deseja excluir esta leitura?')) {
                 try {
-                    // Faz a chamada para a rota DELETE que criamos no app.py
-                    const response = await fetch(`/leituras/${id}`, { 
-                        method: 'DELETE' 
-                    });
-
+                    const response = await fetch(`/leituras/${id}`, { method: 'DELETE' });
                     if (response.ok) {
-                        // Se o servidor deletou com sucesso, removemos a linha da tabela sem recarregar a página
                         const linha = document.getElementById(`linha-${id}`);
                         linha.remove();
                         alert('Leitura removida com sucesso!');
