@@ -85,7 +85,7 @@ Este projeto é uma aplicação web para monitoramento de dados meteorológicos 
 
 ## **Sobre a Simulação de Dados**
 
-Eu fiz a decisão de usar dados simulados porque acredito que isso torna o desenvolvimento mais ágil e a apresentação mais segura. No lugar de depender de sensores que podem sofrer com mau contato ou ruído elétrico durante a demonstração, a minha simulação garante que o foco esteja na funcionalidade do sistema, tornando o projeto mais replicável.
+Eu fiz a decisão de usar dados simulados porque acredito que isso torna o desenvolvimento mais ágil e a apresentação mais segura. No lugar de depender de sensores que podem sofrer com mau contato ou ruído elétrico durante a demonstração, a minha simulação garante que o foco esteja na funcionalidade do sistema, tornando o projeto mais replicável. Porém eu também adicionei no arquivo [código do Arduino aqui](src/arduino/estacao.ino) como seria o código do arduino UNO com os sensores, caso eu utilizasse eles para o projeto.
 
 O arquivo `src/serial_reader.py` gera valores aleatórios de temperatura, umidade e pressão, enviando-os periodicamente para a API da aplicação, como se fossem leituras reais de uma estação meteorológica conectada via Arduino.
 

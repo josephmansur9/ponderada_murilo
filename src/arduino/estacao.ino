@@ -1,39 +1,32 @@
-// eu tinha feito esse c;odigo para um sensor de proximidade que acabei não usando
-const int trigPin = 9;
-const int echoPin = 10;
-const int ledPin = 8;
+//esse código seria para o arduino UNO caso eu estivesse usando ele, ele envia um JSON pela porta Serial a cada 5 segundos
 
-long duracao;
-int distancia;
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
+
+Adafruit_BME280 bme;
 
 void setup() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  pinMode(ledPin, OUTPUT);
-  
   Serial.begin(9600);
+
+  if (!bme.begin(0x76)) {
+    Serial.println("BME280 nao encontrado. Verifique as conexoes.");
+    while (1);
+  }
 }
 
 void loop() {
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  float temperatura = bme.readTemperature();          // °C
+  float umidade     = bme.readHumidity();             // %
+  float pressao     = bme.readPressure() / 100.0F;   // hPa
 
-  duracao = pulseIn(echoPin, HIGH);
+  Serial.print("{\"temperatura\":");
+  Serial.print(temperatura, 2);
+  Serial.print(",\"umidade\":");
+  Serial.print(umidade, 2);
+  Serial.print(",\"pressao\":");
+  Serial.print(pressao, 2);
+  Serial.println("}");
 
-  distancia = duracao * 0.034 / 2;
-
-  Serial.print("Distancia medida: ");
-  Serial.print(distancia);
-  Serial.println(" cm");
-
-  if (distancia < 50) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-  }
-
-  delay(100); 
+  delay(5000); // envia a cada 5 segundos, igual à simulação
 }
